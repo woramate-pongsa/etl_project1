@@ -50,3 +50,14 @@ with DAG(
             "file_path": "/my_etl_project/transformed.csv"
         }
     )
+
+    load_task = PythonOperator(
+        task_id="load_task",
+        python_callable=load,
+        op_kwargs= {
+            "input_path": "/my_etl_project/transformed.csv",
+            "output_path": "/my_etl_project/cleaned.csv" 
+        }
+    )
+
+extract_task >> transform_task >> validation_task >> load_task
