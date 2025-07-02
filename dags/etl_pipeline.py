@@ -26,10 +26,27 @@ with DAG(
 ) as dag:
 
     extract_task = PythonOperator(
-        task_id='extract_task',
+        task_id="extract_task",
         python_callable=extract,
         op_kwargs= {
             "url": "https://data.tmd.go.th/api/WeatherToday/V2/?uid=api&ukey=api12345",
-            
+            "output-path": "/my_etl_project/extracted.csv"
+        }
+    )
+
+    transform_task = PythonOperator(
+        task_id="transform_task",
+        python_callable=transform,
+        op_kwargs= {
+            "input_path": "/my_etl_project/extracted.csv",
+            "output_path": "/my_etl_project/transformed.csv"
+        }
+    )
+
+    validation_task = PythonOperator(
+        task_id="validation_task",
+        python_callable=validation,
+        op_kwargs= {
+            "file_path": "/my_etl_project/transformed.csv"
         }
     )
