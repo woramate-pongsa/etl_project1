@@ -30,7 +30,7 @@ with DAG(
         python_callable=extract,
         op_kwargs= {
             "url": "https://data.tmd.go.th/api/WeatherToday/V2/?uid=api&ukey=api12345",
-            "output_path": "etl_project1/file_csv/raw_data"
+            "output_path": "etl_project1/data/raw_data.csv"
         }
     )
 
@@ -38,8 +38,8 @@ with DAG(
         task_id="transform_task",
         python_callable=transform,
         op_kwargs= {
-            "input_path": "etl_project1/file_csv/raw_data",
-            "output_path": "etl_project1/file_csv/cleaned_data"
+            "input_path": "etl_project1/data/raw_data.csv",
+            "output_path": "etl_project1/data/cleaned_data.csv"
         }
     )
 
@@ -47,7 +47,7 @@ with DAG(
         task_id="validation_task",
         python_callable=validation,
         op_kwargs= {
-            "file_path": "etl_project1/file_csv/cleaned_data"
+            "file_path": "etl_project1/data/cleaned_data.csv"
         }
     )
 
@@ -55,7 +55,7 @@ with DAG(
         task_id="load_task",
         python_callable=load,
         op_kwargs= {
-            "input_path": "etl_project1/file_csv/cleaned_data",
+            "input_path": "etl_project1/data/cleaned_data.csv",
             "output_path": "bigquery_data_warehouse" 
         }
     )
