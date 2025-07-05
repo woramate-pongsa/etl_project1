@@ -9,7 +9,7 @@ from scripts.validation import validation
 
 from airflow import DAG
 from airflow.sensors.filesystem import FileSensor
-from airflow.Operator.python import PythonOperator
+from airflow.operators.python import PythonOperator
 
 default_args = {
     "owner": "airflow_etl",
@@ -20,7 +20,7 @@ default_args = {
 with DAG(
     dag_id='etl_pipeline',
     start_date=datetime(2025, 6, 26),
-    schedule_interval="@daily"
+    schedule_interval="@daily",
     default_args=default_args,
     sla=timedelta(hours=2)
 ) as dag:
@@ -30,7 +30,7 @@ with DAG(
         python_callable=extract,
         op_kwargs= {
             "url": "https://data.tmd.go.th/api/WeatherToday/V2/?uid=api&ukey=api12345",
-            "output-path": "/my_etl_project/extracted.csv"
+            "output_path": "etl_project1/file_csv/raw_data"
         }
     )
 
@@ -38,8 +38,8 @@ with DAG(
         task_id="transform_task",
         python_callable=transform,
         op_kwargs= {
-            "input_path": "/my_etl_project/extracted.csv",
-            "output_path": "/my_etl_project/transformed.csv"
+            "input_path": "etl_project1/file_csv/raw_data",
+            "output_path": "etl_project1/file_csv/cleaned_data"
         }
     )
 
@@ -47,7 +47,7 @@ with DAG(
         task_id="validation_task",
         python_callable=validation,
         op_kwargs= {
-            "file_path": "/my_etl_project/transformed.csv"
+            "file_path": "etl_project1/file_csv/cleaned_data"
         }
     )
 
@@ -55,8 +55,8 @@ with DAG(
         task_id="load_task",
         python_callable=load,
         op_kwargs= {
-            "input_path": "/my_etl_project/transformed.csv",
-            "output_path": "/my_etl_project/cleaned.csv" 
+            "input_path": "etl_project1/file_csv/cleaned_data",
+            "output_path": "bigquery_data_warehouse" 
         }
     )
 
